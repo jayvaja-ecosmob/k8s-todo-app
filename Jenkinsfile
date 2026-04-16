@@ -26,15 +26,15 @@ pipeline {
                 ]) {
                     sh '''
                     cat > secret.yml <<EOF
-                    apiVersion: v1
-                    kind: Secret
-                    metadata:
-                    name: mysql-secret
-                    namespace: todo-app
-                    type: Opaque
-                    stringData:
-                    root-password: $ROOT_PASSWORD
-                    user-password: $USER_PASSWORD
+                        apiVersion: v1
+                        kind: Secret
+                        metadata:
+                            name: mysql-secret
+                            namespace: todo-app
+                        type: Opaque
+                        stringData:
+                            root-password: $ROOT_PASSWORD
+                            user-password: $USER_PASSWORD
                     EOF
                     '''
                 }
