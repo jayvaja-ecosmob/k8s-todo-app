@@ -24,6 +24,7 @@ pipeline {
                 ]) {
                     sh '''
                         aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
+                        kubectl apply -f namespace.yaml
                         kubectl apply -f .
                     '''
                 }
