@@ -10,12 +10,37 @@ pipeline {
                 checkout scm
             }
         }
+
         stage('Clone K8s Repo') {
             steps {
                 git branch: 'main',
                     url: 'https://github.com/jayvaja-ecosmob/k8s-todo-app.git'
             }
         }
+
+        stage('Generate Secret') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'mysql-root-password', variable: 'ROOT_PASSWORD'),
+                    string(credentialsId: 'mysql-user-password', variable: 'USER_PASSWORD')
+                ]) {
+                    sh '''
+                    cat > secret.yml <<EOF
+                    apiVersion: v1
+                    kind: Secret
+                    metadata:
+                    name: mysql-secret
+                    namespace: todo-app
+                    type: Opaque
+                    stringData:
+                    root-password: $ROOT_PASSWORD
+                    user-password: $USER_PASSWORD
+                    EOF
+                    '''
+                }
+            }
+        }
+
         stage('Deploy to EKS') {
             steps {
                 withCredentials([
@@ -31,6 +56,7 @@ pipeline {
             }
         }
     }
+
     post {
         success {
             echo 'Deployment to EKS succeeded!'
