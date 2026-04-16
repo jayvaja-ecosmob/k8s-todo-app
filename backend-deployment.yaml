@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: jayv1161/todo-app-backend:latest   # replace with your image
+          image: jayv1161/todo-app-backend:v1.0.2
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
