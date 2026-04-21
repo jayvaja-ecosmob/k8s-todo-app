@@ -1,3 +1,15 @@
+def sendGoogleChatNotification(message) {
+    withCredentials([string(credentialsId: 'gchat-webhook', variable: 'WEBHOOK_URL')]) {
+        sh """
+        curl -X POST -H 'Content-Type: application/json' \
+        -d '{
+              "text": "${message}"
+            }' \
+        "$WEBHOOK_URL"
+        """
+    }
+}
+
 pipeline {
     agent any
     environment {
@@ -18,29 +30,6 @@ pipeline {
             }
         }
 
-        // stage('Generate Secret') {
-        //     steps {
-        //         withCredentials([
-        //             string(credentialsId: 'mysql-root-password', variable: 'ROOT_PASSWORD'),
-        //             string(credentialsId: 'mysql-user-password', variable: 'USER_PASSWORD')
-        //         ]) {
-        //             sh '''
-        //             cat > secret.yml <<EOF
-        //                 apiVersion: v1
-        //                 kind: Secret
-        //                 metadata:
-        //                     name: mysql-secret
-        //                     namespace: todo-app
-        //                 type: Opaque
-        //                 stringData:
-        //                     root-password: $ROOT_PASSWORD
-        //                     user-password: $USER_PASSWORD
-        //             EOF
-        //             '''
-        //         }
-        //     }
-        // }
-
         stage('Deploy to EKS') {
             steps {
                 withCredentials([
@@ -59,9 +48,16 @@ pipeline {
 
     post {
         success {
+            script {
+                sendGoogleChatNotification("🚀 SUCCESS: EKS Deployment completed for ${env.JOB_NAME} #${env.BUILD_NUMBER}")
+            }
             echo 'Deployment to EKS succeeded!'
         }
+
         failure {
+            script {
+                sendGoogleChatNotification("❌ FAILURE: EKS Deployment failed for ${env.JOB_NAME} #${env.BUILD_NUMBER}")
+            }
             echo 'Deployment to EKS failed!'
         }
     }
