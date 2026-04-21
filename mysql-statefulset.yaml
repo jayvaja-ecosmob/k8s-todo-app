@@ -42,8 +42,7 @@ spec:
                   key: user-password
           volumeMounts:
             - name: mysql-storage
-              mountPath: /var/lib/mysql
-          
+              mountPath: /var/lib/mysql   
   volumeClaimTemplates:
     - metadata:
         name: mysql-storage
