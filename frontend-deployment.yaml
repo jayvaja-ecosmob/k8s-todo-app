@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: jayv1161/todo-app-frontend:v1.0.15
+          image: jayv1161/todo-app-frontend:v1.0.16
           imagePullPolicy: Always
           ports:
             - containerPort: 80
